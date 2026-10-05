@@ -1,41 +1,59 @@
+using _12_HoangVanViet_Assignment01_BackEnd.Models;
+using _12_HoangVanViet_Assignment01_BackEnd.Repositories;
+using Microsoft.AspNetCore.OData;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OData.Edm;
+using Microsoft.OData.ModelBuilder;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddControllers().AddOData(options =>
+    options.Select().Filter().OrderBy().Expand().Count().SetMaxTop(100)
+    .AddRouteComponents("odata", GetEdmModel()));
+
+builder.Services.AddDbContext<FUNewsManagementContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MyCnn")));
+
+builder.Services.AddScoped<ISystemAccountRepository, SystemAccountRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<INewsArticleRepository, NewsArticleRepository>();
+builder.Services.AddScoped<ITagRepository, TagRepository>();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo 
+    { 
+        Title = "FUNewsManagement API", 
+        Version = "v1",
+        Description = "ASP.NET Core Web API with OData for FUNewsManagement System (PRN232 Assignment 1)"
+    });
+});
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FUNewsManagement API v1"));
 }
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.UseAuthorization();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+app.MapControllers();
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+IEdmModel GetEdmModel()
 {
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    var builder = new ODataConventionModelBuilder();
+    builder.EntitySet<Category>("Categories");
+    builder.EntitySet<SystemAccount>("Accounts");
+    builder.EntitySet<NewsArticle>("NewsArticles");
+    builder.EntitySet<Tag>("Tags");
+    return builder.GetEdmModel();
 }

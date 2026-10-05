@@ -1,0 +1,100 @@
+using _12_HoangVanViet_Assignment01_BackEnd.Models;
+using _12_HoangVanViet_Assignment01_BackEnd.Repositories;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
+using System.Linq;
+
+namespace _12_HoangVanViet_Assignment01_BackEnd.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class CategoriesController : ControllerBase
+    {
+        private readonly ICategoryRepository _repository;
+
+        public CategoriesController(ICategoryRepository repository)
+        {
+            _repository = repository;
+        }
+
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            return Ok(_repository.GetCategories());
+        }
+
+        [HttpPost]
+        public IActionResult Post([FromBody] Category category)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _repository.AddCategory(category);
+            return CreatedAtAction(nameof(GetCategory), new { id = category.CategoryID }, category);
+        }
+
+        [HttpGet("/odata/Categories")]
+        [EnableQuery]
+        public IActionResult GetOData()
+        {
+            return Ok(_repository.GetCategories().AsQueryable());
+        }
+
+        [HttpGet("/odata/Categories/$count")]
+        public IActionResult GetODataCount()
+        {
+            return Ok(_repository.GetCategories().Count());
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetCategory(short id)
+        {
+            var category = _repository.GetCategoryById(id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            return Ok(category);
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult Put(short id, [FromBody] Category category)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (id != category.CategoryID)
+            {
+                return BadRequest();
+            }
+
+            var existing = _repository.GetCategoryById(id);
+            if (existing == null)
+            {
+                return NotFound();
+            }
+
+            existing.CategoryName = category.CategoryName;
+            existing.CategoryDesciption = category.CategoryDesciption;
+            existing.ParentCategoryID = category.ParentCategoryID;
+            existing.IsActive = category.IsActive;
+
+            _repository.UpdateCategory(existing);
+            return Ok(existing);
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(short id)
+        {
+            var category = _repository.GetCategoryById(id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            _repository.DeleteCategory(category);
+            return NoContent();
+        }
+    }
+}
