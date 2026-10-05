@@ -22,6 +22,13 @@ namespace _12_HoangVanViet_Assignment01_BackEnd.Controllers
             return Ok(_repository.GetNewsArticles());
         }
 
+        [HttpGet("active")]
+        public IActionResult GetActive()
+        {
+            var activeArticles = _repository.GetNewsArticles().Where(a => a.NewsStatus == true).ToList();
+            return Ok(activeArticles);
+        }
+
         [HttpPost]
         public IActionResult Post([FromBody] NewsArticle article)
         {

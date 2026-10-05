@@ -10,7 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers().AddOData(options =>
     options.Select().Filter().OrderBy().Expand().Count().SetMaxTop(100)
-    .AddRouteComponents("odata", GetEdmModel()));
+    .AddRouteComponents("odata", GetEdmModel()))
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
 
 builder.Services.AddDbContext<FUNewsManagementContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyCnn")));

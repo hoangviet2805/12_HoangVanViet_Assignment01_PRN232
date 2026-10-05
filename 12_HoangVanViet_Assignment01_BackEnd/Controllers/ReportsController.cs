@@ -15,9 +15,14 @@ namespace _12_HoangVanViet_Assignment01_BackEnd.Controllers
         }
 
         [HttpGet("statistics")]
-        public IActionResult GetStatistics()
+        public IActionResult GetStatistics([FromQuery] System.DateTime startDate, [FromQuery] System.DateTime endDate)
         {
-            return Ok(new { Message = "Statistics data" });
+            if (startDate > endDate)
+            {
+                return BadRequest(new { Message = "StartDate cannot be greater than EndDate." });
+            }
+            var statistics = _repository.GetStatistics(startDate, endDate);
+            return Ok(statistics);
         }
     }
 }

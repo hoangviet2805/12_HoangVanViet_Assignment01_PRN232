@@ -10,5 +10,6 @@ namespace _12_HoangVanViet_Assignment01_BackEnd.Repositories
         void AddNewsArticle(NewsArticle article);
         void UpdateNewsArticle(NewsArticle article);
         void DeleteNewsArticle(NewsArticle article);
+        IEnumerable<NewsArticle> GetStatistics(System.DateTime startDate, System.DateTime endDate);
     }
 }

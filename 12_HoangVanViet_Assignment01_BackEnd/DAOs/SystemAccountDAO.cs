@@ -61,6 +61,11 @@ namespace _12_HoangVanViet_Assignment01_BackEnd.DAOs
         public void DeleteAccount(SystemAccount account)
         {
             using var context = new FUNewsManagementContext();
+            bool hasArticles = context.NewsArticles.Any(n => n.CreatedByID == account.AccountID);
+            if (hasArticles)
+            {
+                throw new System.InvalidOperationException("Cannot delete account because it has created news articles.");
+            }
             context.SystemAccounts.Remove(account);
             context.SaveChanges();
         }

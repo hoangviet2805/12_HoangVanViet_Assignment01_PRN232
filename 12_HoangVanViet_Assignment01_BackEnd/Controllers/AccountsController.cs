@@ -93,8 +93,15 @@ namespace _12_HoangVanViet_Assignment01_BackEnd.Controllers
             {
                 return NotFound();
             }
-            _repository.DeleteAccount(account);
-            return NoContent();
+            try
+            {
+                _repository.DeleteAccount(account);
+                return NoContent();
+            }
+            catch (System.InvalidOperationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
 
         [HttpPut("profile/{id}")]

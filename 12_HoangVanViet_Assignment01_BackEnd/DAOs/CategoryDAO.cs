@@ -55,6 +55,11 @@ namespace _12_HoangVanViet_Assignment01_BackEnd.DAOs
         public void DeleteCategory(Category category)
         {
             using var context = new FUNewsManagementContext();
+            bool hasArticles = context.NewsArticles.Any(n => n.CategoryID == category.CategoryID);
+            if (hasArticles)
+            {
+                throw new System.InvalidOperationException("Cannot delete category because it has news articles.");
+            }
             context.Categories.Remove(category);
             context.SaveChanges();
         }

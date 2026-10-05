@@ -67,5 +67,17 @@ namespace _12_HoangVanViet_Assignment01_BackEnd.DAOs
             context.NewsArticles.Remove(article);
             context.SaveChanges();
         }
+
+        public IEnumerable<NewsArticle> GetStatistics(System.DateTime startDate, System.DateTime endDate)
+        {
+            using var context = new FUNewsManagementContext();
+            return context.NewsArticles
+                .Include(n => n.Category)
+                .Include(n => n.CreatedBy)
+                .Include(n => n.NewsTags).ThenInclude(nt => nt.Tag)
+                .Where(n => n.CreatedDate >= startDate && n.CreatedDate <= endDate)
+                .OrderByDescending(n => n.CreatedDate)
+                .ToList();
+        }
     }
 }

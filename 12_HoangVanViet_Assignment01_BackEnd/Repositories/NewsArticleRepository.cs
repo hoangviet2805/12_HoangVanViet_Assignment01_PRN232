@@ -11,5 +11,6 @@ namespace _12_HoangVanViet_Assignment01_BackEnd.Repositories
         public NewsArticle? GetNewsArticleById(string id) => NewsArticleDAO.Instance.GetNewsArticleById(id);
         public IEnumerable<NewsArticle> GetNewsArticles() => NewsArticleDAO.Instance.GetNewsArticles();
         public void UpdateNewsArticle(NewsArticle article) => NewsArticleDAO.Instance.UpdateNewsArticle(article);
+        public IEnumerable<NewsArticle> GetStatistics(System.DateTime startDate, System.DateTime endDate) => NewsArticleDAO.Instance.GetStatistics(startDate, endDate);
     }
 }

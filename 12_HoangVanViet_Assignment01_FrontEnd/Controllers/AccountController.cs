@@ -29,15 +29,10 @@ namespace _12_HoangVanViet_Assignment01_FrontEnd.Controllers
             {
                 HttpContext.Session.SetString("User", JsonSerializer.Serialize(account));
                 HttpContext.Session.SetInt32("Role", account.AccountRole ?? 2);
+                HttpContext.Session.SetInt32("AccountId", account.AccountID);
+                HttpContext.Session.SetString("AccountName", account.AccountName ?? "User");
                 
-                if (account.AccountRole == 0) // Admin
-                {
-                    return RedirectToAction("Index", "SystemAccounts");
-                }
-                else // Staff
-                {
-                    return RedirectToAction("Index", "NewsArticles");
-                }
+                return RedirectToAction("Index", "Home");
             }
 
             ViewBag.Error = "Invalid login attempt.";
