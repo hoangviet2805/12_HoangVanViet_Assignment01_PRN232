@@ -18,9 +18,9 @@ namespace _12_HoangVanViet_Assignment01_FrontEnd.Controllers
         public async Task<IActionResult> Index()
         {
             var role = HttpContext.Session.GetInt32("Role");
-            if (role != 1 && role != 2) // Staff or Lecturer
+            if (role != 1) // Staff only
             {
-                return RedirectToAction("Login", "Account");
+                return RedirectToAction("Index", "Home");
             }
 
             var categories = await _apiService.GetCategoriesAsync();
@@ -31,7 +31,7 @@ namespace _12_HoangVanViet_Assignment01_FrontEnd.Controllers
         public async Task<IActionResult> GetCategory(short id)
         {
             var role = HttpContext.Session.GetInt32("Role");
-            if (role != 1 && role != 2) return Unauthorized();
+            if (role != 1) return Unauthorized();
             
             var category = await _apiService.GetCategoryByIdAsync(id);
             if (category == null) return NotFound();
@@ -42,7 +42,7 @@ namespace _12_HoangVanViet_Assignment01_FrontEnd.Controllers
         public async Task<IActionResult> Create([FromBody] Category category)
         {
             var role = HttpContext.Session.GetInt32("Role");
-            if (role != 1 && role != 2) return Unauthorized();
+            if (role != 1) return Unauthorized();
             if (!ModelState.IsValid) return BadRequest(ModelState);
             
             bool success = await _apiService.CreateCategoryAsync(category);
@@ -54,7 +54,7 @@ namespace _12_HoangVanViet_Assignment01_FrontEnd.Controllers
         public async Task<IActionResult> Update([FromBody] Category category)
         {
             var role = HttpContext.Session.GetInt32("Role");
-            if (role != 1 && role != 2) return Unauthorized();
+            if (role != 1) return Unauthorized();
             if (!ModelState.IsValid) return BadRequest(ModelState);
             
             bool success = await _apiService.UpdateCategoryAsync(category);
@@ -66,7 +66,7 @@ namespace _12_HoangVanViet_Assignment01_FrontEnd.Controllers
         public async Task<IActionResult> Delete(short id)
         {
             var role = HttpContext.Session.GetInt32("Role");
-            if (role != 1 && role != 2) return Unauthorized();
+            if (role != 1) return Unauthorized();
             
             string error = await _apiService.DeleteCategoryAsync(id);
             if (error == null) return Ok(new { message = "Category deleted successfully" });

@@ -113,7 +113,7 @@
                                     </a>
                                 </li>
                             }
-                            else if (Context.Session.GetInt32("Role") == 1 || Context.Session.GetInt32("Role") == 2) // Staff or Lecturer
+                            else if (Context.Session.GetInt32("Role") == 1) // Staff
                             {
                                 <li class="nav-item">
                                     <a class="nav-link" asp-area="" asp-controller="Categories" asp-action="Index">
@@ -125,6 +125,14 @@
                                         <i class="bi bi-file-earmark-text"></i> Manage News
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Profile" asp-action="Index">
+                                        <i class="bi bi-person"></i> My Profile
+                                    </a>
+                                </li>
+                            }
+                            else if (Context.Session.GetInt32("Role") == 2) // Lecturer
+                            {
                                 <li class="nav-item">
                                     <a class="nav-link" asp-area="" asp-controller="Profile" asp-action="Index">
                                         <i class="bi bi-person"></i> My Profile

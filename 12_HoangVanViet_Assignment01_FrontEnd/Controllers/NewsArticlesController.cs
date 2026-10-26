@@ -19,9 +19,9 @@ namespace _12_HoangVanViet_Assignment01_FrontEnd.Controllers
         {
             var role = HttpContext.Session.GetInt32("Role");
             var accountId = HttpContext.Session.GetInt32("AccountId");
-            if (role != 1 && role != 2 || accountId == null)
+            if (role != 1 || accountId == null) // Staff only
             {
-                return RedirectToAction("Login", "Account");
+                return RedirectToAction("Index", "Home");
             }
 
             var articles = await _apiService.GetNewsHistoryAsync((short)accountId.Value);
@@ -34,7 +34,7 @@ namespace _12_HoangVanViet_Assignment01_FrontEnd.Controllers
         public async Task<IActionResult> GetArticle(string id)
         {
             var role = HttpContext.Session.GetInt32("Role");
-            if (role != 1 && role != 2) return Unauthorized();
+            if (role != 1) return Unauthorized();
             
             var article = await _apiService.GetNewsArticleByIdAsync(id);
             if (article == null) return NotFound();
@@ -46,7 +46,7 @@ namespace _12_HoangVanViet_Assignment01_FrontEnd.Controllers
         {
             var role = HttpContext.Session.GetInt32("Role");
             var accountId = HttpContext.Session.GetInt32("AccountId");
-            if (role != 1 && role != 2 || accountId == null) return Unauthorized();
+            if (role != 1 || accountId == null) return Unauthorized();
             
             if (string.IsNullOrEmpty(article.NewsArticleID))
             {
@@ -70,7 +70,7 @@ namespace _12_HoangVanViet_Assignment01_FrontEnd.Controllers
         {
             var role = HttpContext.Session.GetInt32("Role");
             var accountId = HttpContext.Session.GetInt32("AccountId");
-            if (role != 1 && role != 2 || accountId == null) return Unauthorized();
+            if (role != 1 || accountId == null) return Unauthorized();
             if (!ModelState.IsValid) return BadRequest(ModelState);
             
             article.UpdatedByID = (short)accountId.Value;
@@ -84,7 +84,7 @@ namespace _12_HoangVanViet_Assignment01_FrontEnd.Controllers
         public async Task<IActionResult> Delete(string id)
         {
             var role = HttpContext.Session.GetInt32("Role");
-            if (role != 1 && role != 2) return Unauthorized();
+            if (role != 1) return Unauthorized();
             
             bool success = await _apiService.DeleteNewsArticleAsync(id);
             if (success) return Ok(new { message = "Article deleted successfully" });
